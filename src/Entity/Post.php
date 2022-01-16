@@ -4,16 +4,22 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\PostRepository;
-use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\Valid;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[ApiResource(
     normalizationContext: ['groups' => 'read:collections'],
     denormalizationContext: ['groups' => 'write:Post'],
+    collectionOperations: [
+        'get',
+        'post' => [
+            'validation_groups' => ['post:validate']
+        ]
+    ],
     itemOperations: [
         'put' => [
             'denormalization_context' => ['groups' => 'put:item']
@@ -32,7 +38,13 @@ class Post
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['read:collections', 'read:item', 'put:item', 'write:Post'])]
+    #[
+        Groups(['read:collections', 'read:item', 'put:item', 'write:Post', 'post:validate']),
+        Length(
+            min: 6, minMessage: "The length of the title should be at least 6 characters",
+            max: 25, maxMessage: "The title should be less or equal than 25 characters"
+        )
+    ]
     private $title;
 
     #[ORM\Column(type: 'text')]
