@@ -4,26 +4,39 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\PostRepository;
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\Valid;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => 'read:collections']
+    normalizationContext: ['groups' => 'read:collections'],
+    denormalizationContext: ['groups' => 'write:Post'],
+    itemOperations: [
+        'put' => [
+            'denormalization_context' => ['groups' => 'put:item']
+        ],
+        'get' => [
+            'normalization_context' => ['groups' => ['read:item', 'read:Post']]
+        ]
+    ]
 )]
 class Post
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['read:collections'])]
+    #[Groups(['read:collections', 'read:item'])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['read:collections'])]
+    #[Groups(['read:collections', 'read:item', 'put:item', 'write:Post'])]
     private $title;
 
     #[ORM\Column(type: 'text')]
+    #[Groups(['read:item', 'put:item', 'write:Post'])]
     private $content;
 
     #[ORM\Column(type: 'datetime_immutable')]
@@ -32,8 +45,18 @@ class Post
     #[ORM\Column(type: 'datetime_immutable')]
     private $updatedAt;
 
-    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'posts')]
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'posts', cascade: ['persist'])]
+    #[
+        Groups(['read:item', 'write:Post']),
+        Valid()
+    ]
     private $Category;
+
+    public function __construct()
+    {
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
