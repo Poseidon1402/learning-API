@@ -7,7 +7,9 @@ use App\Repository\PostRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['group' => 'read:collections']
+)]
 class Post
 {
     #[ORM\Id]
@@ -26,6 +28,9 @@ class Post
 
     #[ORM\Column(type: 'datetime_immutable')]
     private $updatedAt;
+
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'posts')]
+    private $Category;
 
     public function getId(): ?int
     {
@@ -76,6 +81,18 @@ class Post
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->Category;
+    }
+
+    public function setCategory(?Category $Category): self
+    {
+        $this->Category = $Category;
 
         return $this;
     }
