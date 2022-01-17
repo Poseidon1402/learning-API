@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\PostRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
@@ -28,7 +30,8 @@ use Symfony\Component\Validator\Constraints\Valid;
             'normalization_context' => ['groups' => ['read:item', 'read:Post']]
         ]
     ]
-)]
+),
+ApiFilter(SearchFilter::class, properties: ['id' => 'exact', 'title' => 'partial'])]
 class Post
 {
     #[ORM\Id]
