@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints\Valid;
     collectionOperations: [
         'get',
         'post' => [
-            'validation_groups' => ['post:validate']
+            'validation_groups' => ['create:post']
         ]
     ],
     itemOperations: [
@@ -39,10 +39,11 @@ class Post
 
     #[ORM\Column(type: 'string', length: 255)]
     #[
-        Groups(['read:collections', 'read:item', 'put:item', 'write:Post', 'post:validate']),
+        Groups(['read:collections', 'read:item', 'put:item', 'write:Post']),
         Length(
             min: 6, minMessage: "The length of the title should be at least 6 characters",
-            max: 25, maxMessage: "The title should be less or equal than 25 characters"
+            max: 25, maxMessage: "The title should be less or equal than 25 characters",
+            groups: ['create:post']
         )
     ]
     private $title;
@@ -59,15 +60,15 @@ class Post
 
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'posts', cascade: ['persist'])]
     #[
-        Groups(['read:item', 'write:Post']),
+        Groups(['read:item', 'write:Post', 'put:item']),
         Valid()
     ]
     private $Category;
 
     public function __construct()
     {
-        $this->createdAt = new DateTimeImmutable();
-        $this->updatedAt = new DateTimeImmutable();
+        $this->createdAt = new DateTimeImmutable;
+        $this->updatedAt = new DateTimeImmutable;
     }
 
     public function getId(): ?int

@@ -23,8 +23,11 @@ class Category
 
     #[ORM\Column(type: 'string', length: 255)]
     #[
-        Groups(['read:collections', 'read:Post', 'write:Post']),
-        Length(min: 6, minMessage: "The length of the name should be at least 6 characters")
+        Groups(['read:collections', 'read:Post', 'write:Post', 'put:item']),
+        Length(
+            min: 6, minMessage: "The length of the name should be at least 6 characters",
+            groups: ['create:post']
+        )
     ]
     private $name;
 
