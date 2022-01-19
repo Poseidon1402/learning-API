@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Controller\CountCollectionsController;
 use App\Controller\PostPublishController;
 use App\Repository\PostRepository;
 use DateTimeImmutable;
@@ -24,12 +25,28 @@ use Symfony\Component\Validator\Constraints\Valid;
         'get',
         'post' => [
             'validation_groups' => ['create:post']
-        ]
-        /*'count' => [
+        ],
+        'count' => [
             'method' => 'GET',
             'path' => '/posts/count',
-            'controller' => 
-        ]*/
+            'controller' => CountCollectionsController::class,
+            'openapi_context' => [
+                'summary' => 'Retrieve the number of the post',
+                'responses' => [
+                    '200' => [
+                        'description' => 'OK',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    'type' => 'integer',
+                                    'example' => 3
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
     ],
     itemOperations: [
         'delete',
@@ -43,6 +60,9 @@ use Symfony\Component\Validator\Constraints\Valid;
             'method' => 'POST',
             'path' => '/posts/{id}/publish',
             'controller' => PostPublishController::class,
+            'openapi_context' => [
+                'summary' => 'Used to publish the post'
+            ]
         ]
     ]
 ),
