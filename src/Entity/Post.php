@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Controller\PostPublishController;
 use App\Repository\PostRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
@@ -24,13 +25,24 @@ use Symfony\Component\Validator\Constraints\Valid;
         'post' => [
             'validation_groups' => ['create:post']
         ]
+        /*'count' => [
+            'method' => 'GET',
+            'path' => '/posts/count',
+            'controller' => 
+        ]*/
     ],
     itemOperations: [
+        'delete',
         'put' => [
             'denormalization_context' => ['groups' => 'put:item']
         ],
         'get' => [
             'normalization_context' => ['groups' => ['read:item', 'read:Post']]
+        ],
+        'publish' => [
+            'method' => 'POST',
+            'path' => '/posts/{id}/publish',
+            'controller' => PostPublishController::class,
         ]
     ]
 ),
@@ -70,6 +82,10 @@ class Post
         Valid()
     ]
     private $Category;
+
+    #[ORM\Column(type: 'boolean', nullable: true, options: ['default' => 0])]
+    #[Groups(['read:collections'])]
+    private $online = false;
 
     public function __construct()
     {
@@ -138,6 +154,18 @@ class Post
     public function setCategory(?Category $Category): self
     {
         $this->Category = $Category;
+
+        return $this;
+    }
+
+    public function getOnline(): ?bool
+    {
+        return $this->online;
+    }
+
+    public function setOnline(?bool $online): self
+    {
+        $this->online = $online;
 
         return $this;
     }
