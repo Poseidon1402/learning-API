@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\PostRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 class CountCollectionsController
 {
@@ -10,8 +11,13 @@ class CountCollectionsController
     {        
     }
 
-    public function __invoke(): int
+    public function __invoke(Request $request): int
     {
-       return $this->postRepository->count([]);
+        $onlineQuery = $request->get('online');
+        $conditions = [];
+
+        if($onlineQuery != null) $conditions = ['online' => $onlineQuery == '1' ? true : false];
+
+        return $this->postRepository->count($conditions);
     }
 }

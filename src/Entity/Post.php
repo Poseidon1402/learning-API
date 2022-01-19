@@ -30,8 +30,23 @@ use Symfony\Component\Validator\Constraints\Valid;
             'method' => 'GET',
             'path' => '/posts/count',
             'controller' => CountCollectionsController::class,
+            'read' => false,
+            'filters' => [],
+            'pagination_enabled' => false,
             'openapi_context' => [
                 'summary' => 'Retrieve the number of the post',
+                'parameters' => [
+                    [
+                        'in' => 'query',
+                        'name' => 'online',
+                        'schema' => [
+                            'type' => 'integer',
+                            'maximum' => 1,
+                            'minimum' => 0
+                        ],
+                        'description' => 'filter all online posts'
+                    ]
+                ],
                 'responses' => [
                     '200' => [
                         'description' => 'OK',
