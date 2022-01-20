@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Controller\CountCollectionsController;
@@ -82,7 +83,14 @@ use Symfony\Component\Validator\Constraints\Valid;
             'path' => '/posts/{id}/publish',
             'controller' => PostPublishController::class,
             'openapi_context' => [
-                'summary' => 'Used to publish the post'
+                'summary' => 'Used to publish the post',
+                'requestBody' => [
+                    'content' => [
+                        'application/json' => [
+                            'schema' => []
+                        ]
+                    ]
+                ]
             ]
         ]
     ]
@@ -125,7 +133,10 @@ class Post
     private $Category;
 
     #[ORM\Column(type: 'boolean', nullable: true, options: ['default' => 0])]
-    #[Groups(['read:collections'])]
+    #[Groups(
+        ['read:collections']),
+        ApiProperty(openapiContext: ['type' => 'boolean', 'description' => 'Online or not'])
+    ]
     private $online = false;
 
     public function __construct()
