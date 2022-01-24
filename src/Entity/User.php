@@ -2,12 +2,29 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\SecurityController;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+/*#[ApiResource(
+    collectionOperations: [],
+    itemOperations: [
+        'get' => [
+            'normalization_context' => ['groups' => ['user:read']],
+            'method' => 'GET',
+            'path' => '/login',
+            'controller' => SecurityController::class,
+            'openapi_context' => [
+                'summary' => 'Authenticate the user from the cookie'
+            ]
+        ]
+    ]
+)]*/
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
