@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Action\NotFoundAction;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Controller\SecurityController;
+use App\Controller\MyAccountController;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -11,31 +12,44 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-/*#[ApiResource(
-    collectionOperations: [],
-    itemOperations: [
-        'get' => [
-            'normalization_context' => ['groups' => ['user:read']],
-            'method' => 'GET',
-            'path' => '/login',
-            'controller' => SecurityController::class,
+#[ApiResource(
+    security: 'is_granted("ROLE_USER")',
+    normalizationContext: ['groups' => ['user:read']],
+    collectionOperations: [
+        'myAccount' => [
+            'controller' => MyAccountController::class,
+            'method' => 'get',
+            'read' => false,
+            'path' => '/myAccount',
+            'pagination_enabled' => false,
             'openapi_context' => [
-                'summary' => 'Authenticate the user from the cookie'
+                'security' => ['cookieAuth' => []]
             ]
         ]
+    ],
+    itemOperations: [
+        'get' => [
+            'controller' => NotFoundAction::class,
+            'openapi_context' => ['summary' => 'hidden'],
+            'read' => false, 
+            'output' => false        
+        ]
     ]
-)]*/
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['user:read'])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[Groups(['user:read'])]
     private $email;
 
     #[ORM\Column(type: 'json')]
+    #[Groups(['user:read'])]
     private $roles = [];
 
     #[ORM\Column(type: 'string')]

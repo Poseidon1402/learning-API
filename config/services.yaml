@@ -25,6 +25,9 @@ services:
     # please note that last definitions always *replace* previous ones
     App\Controller\CountCollectionsController:
         tags: [ controller.service_arguments ]
+    
+    App\Controller\MyAccountController:
+        tags: [ controller.service_arguments ]
 
     App\OpenApi\OpenApiFactory:
         decorates: 'api_platform.openapi.factory'
