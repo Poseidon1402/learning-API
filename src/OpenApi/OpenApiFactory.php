@@ -75,6 +75,21 @@ class OpenApiFactory implements OpenApiFactoryInterface{
         );
         
         $openApi->getPaths()->addPath('/api/login', $pathItem);
+
+        $logoutPathItem = new PathItem(
+            post: new Operation(
+                tags: ['User'],
+                responses: [
+                    '204' => [
+                        'content' => [
+                            'application/json' => []
+                        ]
+                    ]
+                ],
+                summary: 'Logout from your account'
+            )
+        );
+        $openApi->getPaths()->addPath('/logout', $logoutPathItem);
         return $openApi;
     }
 }
