@@ -15,7 +15,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     security: "is_granted('ROLE_USER')",
     normalizationContext: ['groups' => ['user:read']],
-    collectionOperations: [
+    collectionOperations: [],
+    itemOperations: [
+        'get' => [
+            'controller' => NotFoundAction::class,
+            'openapi_context' => ['summary' => 'hidden'],
+            'read' => false, 
+            'output' => false        
+        ],
+        
         'myAccount' => [
             'controller' => MyAccountController::class,
             'method' => 'get',
@@ -25,14 +33,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'openapi_context' => [
                 'security' => ['cookieAuth' => []]
             ]
-        ]
-    ],
-    itemOperations: [
-        'get' => [
-            'controller' => NotFoundAction::class,
-            'openapi_context' => ['summary' => 'hidden'],
-            'read' => false, 
-            'output' => false        
         ]
     ]
 )]
