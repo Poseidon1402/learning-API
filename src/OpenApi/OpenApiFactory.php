@@ -46,6 +46,12 @@ class OpenApiFactory implements OpenApiFactoryInterface{
             ],
         ]);
 
+        #Remove parameters on a specific item
+        $myAccountOperation = $openApi->getPaths()->getPath('/api/myAccount')->getGet()->withParameters([]);
+        $myAccountPathItem = $openApi->getPaths()->getPath('/api/myAccount')->withGet($myAccountOperation);
+        $openApi->getPaths()->addPath('/api/myAccount',$myAccountPathItem);
+
+        #Adding the path for the authentication on API PLATFORM
         $pathItem = new PathItem(
             post: new Operation(
                 tags: ['User'],
